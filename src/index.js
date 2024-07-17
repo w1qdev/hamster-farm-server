@@ -32,16 +32,36 @@ setInterval(async () => {
                         Math.round(responseUserData.earnPassivePerSec) * 60;
                     const earnPassivePerHour =
                         Math.round(earnPassivePerMin) * 60;
+                    const earnPassivePerDay =
+                        Math.round(earnPassivePerHour) * 24;
+                    const earnPassivePerWeek =
+                        Math.round(earnPassivePerDay) * 7;
+                    const earnPassivePerMonth =
+                        Math.round(earnPassivePerWeek) * 4;
 
                     // log user data in console
                     console.log(`id: ${chalk.blue(responseUserData.id)}`);
                     console.log(
                         `balance: ${chalk.yellow(
-                            Math.round(responseUserData.balanceCoins)
-                        )} coins (${chalk.green(
-                            earnPassivePerMin
-                        )}/min) (${chalk.green(earnPassivePerHour)}/hour)`
+                            Math.round(
+                                responseUserData.balanceCoins
+                            ).toLocaleString("ru")
+                        )} coins`
                     );
+                    console.log(
+                        `earnings: (${chalk.green(
+                            earnPassivePerMin.toLocaleString("ru")
+                        )}/min) (${chalk.green(
+                            earnPassivePerHour.toLocaleString("ru")
+                        )}/hour) (${chalk.green(
+                            earnPassivePerDay.toLocaleString("ru")
+                        )}/day) (${chalk.green(
+                            earnPassivePerWeek.toLocaleString("ru")
+                        )}/week) (${chalk.green(
+                            earnPassivePerMonth.toLocaleString("ru")
+                        )}/month)`
+                    );
+
                     console.log(
                         `level: ${chalk.green(responseUserData.level)}`
                     );
