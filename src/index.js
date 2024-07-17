@@ -28,13 +28,19 @@ setInterval(async () => {
                 if (res.data) {
                     // get all user data
                     const responseUserData = res.data.clickerUser;
+                    const earnPassivePerMin =
+                        Math.round(responseUserData.earnPassivePerSec) * 60;
+                    const earnPassivePerHour =
+                        Math.round(earnPassivePerMin) * 60;
 
                     // log user data in console
                     console.log(`id: ${chalk.blue(responseUserData.id)}`);
                     console.log(
                         `balance: ${chalk.yellow(
                             Math.round(responseUserData.balanceCoins)
-                        )} coins`
+                        )} coins (${chalk.green(
+                            earnPassivePerMin
+                        )}/min) (${chalk.green(earnPassivePerHour)}/hour)`
                     );
                     console.log(
                         `level: ${chalk.green(responseUserData.level)}`

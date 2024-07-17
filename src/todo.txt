@@ -1,0 +1,7 @@
+api для получения бсплатного заполнения энергии каждый час до 6 раз в день
+https://api.hamsterkombatgame.io/clicker/buy-boost
+
+{
+    "boostId": "BoostFullAvailableTaps",
+    "timestamp": 1721242970
+}
