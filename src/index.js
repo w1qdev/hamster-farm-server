@@ -29,8 +29,6 @@ setInterval(async () => {
                     // get all user data
                     const responseUserData = res.data.clickerUser;
 
-                    console.log(responseUserData.earnPassivePerSec);
-
                     const earnPassivePerMin =
                         responseUserData.earnPassivePerSec.toFixed(1) * 60;
                     const earnPassivePerHour =
