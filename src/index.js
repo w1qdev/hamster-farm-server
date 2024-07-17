@@ -28,16 +28,18 @@ setInterval(async () => {
                 if (res.data) {
                     // get all user data
                     const responseUserData = res.data.clickerUser;
+
+                    console.log(responseUserData.earnPassivePerSec);
+
                     const earnPassivePerMin =
-                        Math.round(responseUserData.earnPassivePerSec) * 60;
+                        responseUserData.earnPassivePerSec.toFixed(1) * 60;
                     const earnPassivePerHour =
-                        Math.round(earnPassivePerMin) * 60;
+                        earnPassivePerMin.toFixed(1) * 60;
                     const earnPassivePerDay =
-                        Math.round(earnPassivePerHour) * 24;
-                    const earnPassivePerWeek =
-                        Math.round(earnPassivePerDay) * 7;
+                        earnPassivePerHour.toFixed(1) * 24;
+                    const earnPassivePerWeek = earnPassivePerDay.toFixed(1) * 7;
                     const earnPassivePerMonth =
-                        Math.round(earnPassivePerWeek) * 4;
+                        earnPassivePerWeek.toFixed(1) * 4;
 
                     // log user data in console
                     console.log(`id: ${chalk.blue(responseUserData.id)}`);
