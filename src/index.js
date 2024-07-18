@@ -10,7 +10,7 @@ const accountUserData = {
     coins: 0,
 };
 
-const upgradesList = structuredClone(upgrades.upgradesForBuy);
+let upgradesList = structuredClone(upgrades.upgradesForBuy);
 
 app.listen(3000, () => {
     console.log("Server started...");
@@ -84,6 +84,8 @@ setInterval(async () => {
 }, 10000);
 
 setInterval(async () => {
+    let newUpgradesList = [];
+
     for (let item of upgradesList) {
         try {
             if (
@@ -103,8 +105,12 @@ setInterval(async () => {
                     );
                 }
 
-                upgradesList = [...response.data.upgradesForBuy];
+                newUpgradesList = [...response.data.upgradesForBuy];
             }
         } catch (e) {}
+    }
+
+    if (newUpgradesList.length) {
+        upgradesList = structuredClone(newUpgradesList);
     }
 }, 10000);
