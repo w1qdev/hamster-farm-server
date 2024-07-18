@@ -5,3 +5,16 @@ https://api.hamsterkombatgame.io/clicker/buy-boost
     "boostId": "BoostFullAvailableTaps",
     "timestamp": 1721242970
 }
+
+
+
+
+POST https://api.hamsterkombatgame.io/clicker/sync
+
+
+
+POST https://api.hamsterkombatgame.io/clicker/claim-daily-cipher
+
+{
+    "cipher": "YIELD"
+}

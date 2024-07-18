@@ -10,6 +10,12 @@ const accountUserData = {
     coins: 0,
 };
 
+const userSettings = {
+    isMineMiners: true,
+    isMineBoosters: true, // coming soon
+    isMineSpecials: true, // coming soon
+};
+
 let upgradesList = structuredClone(upgrades.upgradesForBuy);
 
 app.listen(3000, () => {
@@ -83,34 +89,36 @@ setInterval(async () => {
     }
 }, 10000);
 
-setInterval(async () => {
-    let newUpgradesList = [];
+if (userSettings.isMineMiners) {
+    setInterval(async () => {
+        let newUpgradesList = [];
 
-    for (let item of upgradesList) {
-        try {
-            if (
-                item.isAvailable === true &&
-                item.price <= accountUserData.coins
-            ) {
-                const response = await api.post(`/clicker/buy-upgrade`, {
-                    upgradeId: item.id,
-                    timestamp: new Date().getTime(),
-                });
+        for (let item of upgradesList) {
+            try {
+                if (
+                    item.isAvailable === true &&
+                    item.price <= accountUserData.coins
+                ) {
+                    const response = await api.post(`/clicker/buy-upgrade`, {
+                        upgradeId: item.id,
+                        timestamp: new Date().getTime(),
+                    });
 
-                if (response.data) {
-                    console.log(
-                        `${chalk.green(item.id)} booster upgraded up to ${
-                            item.level + 1
-                        } lv.`
-                    );
+                    if (response.data) {
+                        console.log(
+                            `${chalk.green(item.id)} booster upgraded up to ${
+                                item.level + 1
+                            } lv.`
+                        );
+                    }
+
+                    newUpgradesList = [...response.data.upgradesForBuy];
                 }
+            } catch (e) {}
+        }
 
-                newUpgradesList = [...response.data.upgradesForBuy];
-            }
-        } catch (e) {}
-    }
-
-    if (newUpgradesList.length) {
-        upgradesList = structuredClone(newUpgradesList);
-    }
-}, 10000);
+        if (newUpgradesList.length) {
+            upgradesList = structuredClone(newUpgradesList);
+        }
+    }, 10000);
+}
