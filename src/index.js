@@ -1,7 +1,7 @@
 import express from "express";
 import chalk from "chalk";
 import { upgradesDB, boostsDB } from "./db/database.js";
-import { api, getBoostsForBuy, buyBoost } from "./api/api.js";
+import { api, buyBoost } from "./api/api.js";
 
 const app = express();
 
@@ -14,7 +14,7 @@ const accountUserData = {
 const userSettings = {
     isBuyMiners: true,
     isBuyBoosters: true,
-    isBuyCards: true, // coming soon
+    isBuyCards: false, // coming soon
 };
 
 let upgradesList = await upgradesDB.getUpgradesForBuy();
@@ -107,7 +107,7 @@ setInterval(async () => {
                     if (response.data) {
                         console.log(
                             `${chalk.green(item.id)} miner upgraded up to lv. ${
-                                item.level + 1
+                                item.level
                             } for ${chalk.green(
                                 item.price.toLocaleString("ru")
                             )} coins`
@@ -133,7 +133,6 @@ setInterval(async () => {
             try {
                 if (boost.price <= accountUserData.coins) {
                     // TODO: должен еще проверяться уровень буста, если он максимальный, то ничего не делать
-
                     const response = await buyBoost(boost.id);
 
                     if (response.data) {
@@ -141,7 +140,7 @@ setInterval(async () => {
                             console.log(
                                 `${chalk.green(
                                     boost.id
-                                )} booster got ${chalk.green(boost.level)}`
+                                )} booster got ${chalk.green(boost.level)}/6`
                             );
                         } else {
                             console.log(
