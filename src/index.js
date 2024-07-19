@@ -1,19 +1,20 @@
 import express from "express";
 import chalk from "chalk";
-import { api } from "./api/api.js";
+import { api, getBoostsForBuy, buyBoost } from "./api/api.js";
 import upgrades from "./constants.js";
 
 const app = express();
 
+let newUpgradesList = [];
 const accountUserData = {
     energyLimit: 1000,
     coins: 0,
 };
 
 const userSettings = {
-    isMineMiners: true,
-    isMineBoosters: true, // coming soon
-    isMineSpecials: true, // coming soon
+    isBuyMiners: true,
+    isBuyBoosters: true,
+    isBuyCards: true, // coming soon
 };
 
 let upgradesList = structuredClone(upgrades.upgradesForBuy);
@@ -89,10 +90,8 @@ setInterval(async () => {
     }
 }, 10000);
 
-if (userSettings.isMineMiners) {
-    setInterval(async () => {
-        let newUpgradesList = [];
-
+setInterval(async () => {
+    if (userSettings.isBuyMiners) {
         for (let item of upgradesList) {
             try {
                 if (
@@ -106,9 +105,9 @@ if (userSettings.isMineMiners) {
 
                     if (response.data) {
                         console.log(
-                            `${chalk.green(item.id)} booster upgraded up to ${
+                            `${chalk.green(item.id)} miner upgraded up to lv. ${
                                 item.level + 1
-                            } lv.`
+                            } for ${item.price} coins`
                         );
                     }
 
@@ -117,8 +116,46 @@ if (userSettings.isMineMiners) {
             } catch (e) {}
         }
 
-        if (newUpgradesList.length) {
+        if (newUpgradesList.length === 0) {
             upgradesList = structuredClone(newUpgradesList);
         }
-    }, 10000);
-}
+    }
+
+    if (userSettings.isBuyBoosters) {
+        // TODO: Experimental
+        const { boostsForBuy } = await getBoostsForBuy();
+
+        for (let boost of boostsForBuy) {
+            try {
+                if (
+                    boost.price <= accountUserData.coins &&
+                    boost.cooldownSeconds <= 0
+                ) {
+                    // TODO: должен еще проверяться уровень буста, если он максимальный, то ничего не делать
+
+                    const response = await buyBoost(boost.id);
+
+                    if (response.data) {
+                        if (boost.id === "BoostFullAvailableTaps") {
+                            console.log(
+                                `${chalk.green(
+                                    boost.id
+                                )} booster got ${chalk.green(boost.level)}`
+                            );
+                        } else {
+                            console.log(
+                                `${chalk.green(
+                                    boost.id
+                                )} booster upgraded up to ${chalk.green(
+                                    boost.level + 1
+                                )} lv. for ${chalk.green(
+                                    boost.price.toLocaleString("ru")
+                                )} coins`
+                            );
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+    }
+}, 10000);

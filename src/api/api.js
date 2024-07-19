@@ -9,3 +9,20 @@ export const api = axios.create({
         Authorization: `Bearer ${accessToken}`,
     },
 });
+
+export const getBoostsForBuy = async () => {
+    const response = await api.post("/clicker/boosts-for-buy");
+
+    return response.data;
+};
+
+export const buyBoost = async (boostId) => {
+    const payload = {
+        boostId: boostId,
+        timestamp: new Date().getTime(),
+    };
+
+    const response = await api.post("/clicker/buy-boost", payload);
+
+    return response;
+};
