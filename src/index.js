@@ -1,7 +1,7 @@
 import express from "express";
 import chalk from "chalk";
+import { upgradesDB, boostsDB } from "./db/database.js";
 import { api, getBoostsForBuy, buyBoost } from "./api/api.js";
-import upgrades from "./constants.js";
 
 const app = express();
 
@@ -17,7 +17,8 @@ const userSettings = {
     isBuyCards: true, // coming soon
 };
 
-let upgradesList = structuredClone(upgrades.upgradesForBuy);
+let upgradesList = await upgradesDB.getUpgradesForBuy();
+let boostsList = await boostsDB.getBoostsForBuy();
 
 app.listen(3000, () => {
     console.log("Server started...");
@@ -107,7 +108,9 @@ setInterval(async () => {
                         console.log(
                             `${chalk.green(item.id)} miner upgraded up to lv. ${
                                 item.level + 1
-                            } for ${item.price} coins`
+                            } for ${chalk.green(
+                                item.price.toLocaleString("ru")
+                            )} coins`
                         );
                     }
 
@@ -116,21 +119,19 @@ setInterval(async () => {
             } catch (e) {}
         }
 
-        if (newUpgradesList.length === 0) {
-            upgradesList = structuredClone(newUpgradesList);
+        if (newUpgradesList.length) {
+            upgradesList = [...newUpgradesList];
+
+            await upgradesDB.writeUpgradesForBuy(upgradesList);
         }
     }
 
     if (userSettings.isBuyBoosters) {
         // TODO: Experimental
-        const { boostsForBuy } = await getBoostsForBuy();
 
-        for (let boost of boostsForBuy) {
+        for (let boost of boostsList) {
             try {
-                if (
-                    boost.price <= accountUserData.coins &&
-                    boost.cooldownSeconds <= 0
-                ) {
+                if (boost.price <= accountUserData.coins) {
                     // TODO: должен еще проверяться уровень буста, если он максимальный, то ничего не делать
 
                     const response = await buyBoost(boost.id);
@@ -153,6 +154,10 @@ setInterval(async () => {
                                 )} coins`
                             );
                         }
+
+                        await boostsDB.writeBoostsForBuy(
+                            response.data.boostsForBuy
+                        );
                     }
                 }
             } catch (e) {}
